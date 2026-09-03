@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:8080/api
+
+### 1. Đăng ký tài khoản mới (Sign Up)
+# @name signUp
+POST {{baseUrl}}/auth/sign-up/email
+Content-Type: application/json
+
+{
+  "name": "Nguyen Van A",
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+### 2. Đăng nhập (Sign In)
+# @name signIn
+POST {{baseUrl}}/auth/sign-in/email
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+### Lưu ý: Better Auth tự động trả về Cookie 'better-auth.session_token' hoặc token trong response.
+
+### 3. Lấy thông tin Session hiện tại (Get Session)
+# Gửi kèm Cookie hoặc Bearer Token nhận được từ bước đăng nhập/đăng ký
+GET {{baseUrl}}/auth/get-session
+Content-Type: application/json
+
+### 4. Đăng xuất (Sign Out)
+POST {{baseUrl}}/auth/sign-out
+Content-Type: application/json
+
+{}
