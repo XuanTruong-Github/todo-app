@@ -1,6 +1,14 @@
-import { IsString, MaxLength, IsOptional, MinLength, IsDate, IsEnum, IsArray } from "class-validator";
-import { TodoPriority, TodoStatus } from "src/common/enums/todo.enum";
-import { Transform } from "class-transformer";
+import {
+  IsString,
+  MaxLength,
+  IsOptional,
+  MinLength,
+  IsDate,
+  IsEnum,
+  IsArray,
+} from 'class-validator';
+import { TodoPriority, TodoStatus } from 'src/todo/todo.enum';
+import { Transform } from 'class-transformer';
 
 export class CreateTodoDto {
   @IsString()
@@ -21,7 +29,7 @@ export class CreateTodoDto {
   priority?: TodoPriority;
 
   @IsDate()
-  @Transform(({ value }) => value ? new Date(value) : null)
+  @Transform(({ value }) => (value ? new Date(value) : null))
   @IsOptional()
   dueDate?: Date;
 

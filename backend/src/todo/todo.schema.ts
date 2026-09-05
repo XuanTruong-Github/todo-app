@@ -1,10 +1,10 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
-import { TodoPriority, TodoStatus } from "src/common/enums/todo.enum";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+import { TodoPriority, TodoStatus } from 'src/todo/todo.enum';
 
 @Schema({
   collection: 'todos',
-  timestamps: true
+  timestamps: true,
 })
 export class Todo {
   @Prop({ type: String, required: true, trim: true, maxLength: 200 })
@@ -26,8 +26,12 @@ export class Todo {
   tags?: string[];
 
   @Prop({ type: Date, default: null })
-  completedAt?: Date
+  completedAt?: Date;
+
+  @Prop({ type: String, required: true, index: true, ref: 'user' })
+  userId: string;
 }
 
 export type TodoDocument = HydratedDocument<Todo>;
 export const TodoSchema = SchemaFactory.createForClass(Todo);
+TodoSchema.index({ userId: 1, createdAt: -1 });

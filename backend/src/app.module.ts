@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
-import { APP_GUARD } from '@nestjs/core';
+import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { TodoModule } from './todo/todo.module';
-import { AuthModule } from './auth/auth.module';
-import { AuthGuard } from './auth/auth.guard';
+import { AuthModule } from '@thallesp/nestjs-better-auth';
+import { Connection } from 'mongoose';
+import { createAuthInstance } from './configs/auth.config';
 
 @Module({
   imports: [
@@ -20,15 +20,27 @@ import { AuthGuard } from './auth/auth.guard';
         dbName: 'todo',
       }),
     }),
+    AuthModule.forRootAsync({
+      inject: [getConnectionToken()],
+      useFactory: async (connection: Connection) => {
+        const db = connection.db;
+        if (!db) {
+          throw new Error(
+            'Mongoose Connection chưa sẵn sàng hoặc chưa kết nối thành công tới MongoDB.',
+          );
+        }
+        return {
+          auth: createAuthInstance(db),
+          bodyParser: {
+            json: { limit: '2mb' },
+            urlencoded: { limit: '2mb', extended: true },
+            rawBody: true,
+          },
+        };
+      },
+    }),
     TodoModule,
-    AuthModule.forRoot(),
   ],
   controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD, // 👈 Đăng ký AuthGuard làm Global Guard
-      useClass: AuthGuard,
-    },
-  ],
 })
 export class AppModule {}

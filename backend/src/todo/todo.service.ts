@@ -8,25 +8,27 @@ import { QueryTodoDto } from './dto/query-todo.dto';
 
 @Injectable()
 export class TodoService {
-  constructor(@InjectModel(Todo.name) private readonly todoModel: Model<Todo>) { }
-  async create(createTodoDto: CreateTodoDto) {
-    return this.todoModel.create(createTodoDto)
+  constructor(
+    @InjectModel(Todo.name) private readonly todoModel: Model<Todo>,
+  ) {}
+  async create(createTodoDto: CreateTodoDto, userId: string) {
+    return this.todoModel.create({ ...createTodoDto, userId });
   }
 
-  async findAll(query: QueryTodoDto) {
-    const skip = (query.page - 1) * query.limit
-    return this.todoModel.find().skip(skip).limit(query.limit).exec()
+  async findAll(query: QueryTodoDto, userId: string) {
+    const skip = (query.page - 1) * query.limit;
+    return this.todoModel.find({ userId }).skip(skip).limit(query.limit).exec();
   }
 
   async findOne(id: string) {
-    return this.todoModel.findById(id).lean()
+    return this.todoModel.findById(id).lean();
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto) {
-    return this.todoModel.findByIdAndUpdate(id, updateTodoDto, { new: true })
+    return this.todoModel.findByIdAndUpdate(id, updateTodoDto, { new: true });
   }
 
   async remove(id: string) {
-    return this.todoModel.findByIdAndDelete(id)
+    return this.todoModel.findByIdAndDelete(id);
   }
 }
